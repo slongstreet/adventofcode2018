@@ -55,6 +55,7 @@ func processInput(filepath string) ([]int, error) {
 	return frequencies, scanner.Err()
 }
 
+// Finds the first repeated frequency total from looping through the frequency inputs.
 func findFirstRepeatFrequency(frequencies []int) int {
 	dict := map[int]int{0: 1} // map to store count of values
 	total := 0
