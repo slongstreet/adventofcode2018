@@ -33,6 +33,16 @@ func main() {
 
 	checksum := doublesCount * triplesCount
 	fmt.Printf("Checksum = %d\n", checksum)
+
+	// Part 2 - Find common characters
+	for i := 0; i < len(lines); i++ {
+		for j := i + 1; j < len(lines); j++ {
+			if evaluateSingleCharDifference(lines[i], lines[j]) {
+				fmt.Printf("Common characters = %s\n", findCommonCharacters(lines[i], lines[j]))
+				break
+			}
+		}
+	}
 }
 
 // Reads whitespace-separated strings from a file.
@@ -87,4 +97,37 @@ func evaluateTestCase(testCaseID string, input string, expectedDoubles int, expe
 	}
 
 	fmt.Printf("%s: 2x: %d, 3x: %d => %s\n", testCaseID, d, t, pass)
+}
+
+// Compare two strings and return true if they differ only by one character; false otherwise.
+func evaluateSingleCharDifference(left string, right string) bool {
+	if len(left) != len(right) {
+		return false
+	}
+
+	difference := 0
+	for i := 0; i < len(left); i++ {
+		if left[i] != right[i] {
+			difference++
+		}
+	}
+
+	if difference == 1 {
+		return true
+	}
+
+	return false
+}
+
+// Return a string containing the common characters of two input strings.
+func findCommonCharacters(left string, right string) string {
+	var commonCharacters string
+
+	for i := 0; i < len(left); i++ {
+		if left[i] == right[i] {
+			commonCharacters = commonCharacters + string(left[i])
+		}
+	}
+
+	return commonCharacters
 }
