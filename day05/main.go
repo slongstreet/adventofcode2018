@@ -10,18 +10,30 @@ import (
 )
 
 func main() {
-	polymer, _ := loadInputFromFile("input.txt")
+	rawInput, _ := loadInputFromFile("input.txt")
+	var polymer string
 
 	// Part 1 - process all reactions until polymer is stable, then calculate length
-	var reacted bool
-	for {
-		reacted, polymer = processPolymer(polymer)
-		if !reacted {
-			break
+	polymer = processPolymer(rawInput)
+
+	fmt.Printf("Part one: polymer length: %d\n", len(polymer))
+
+	// Part 2 - find shortest polymer if one unit type is removed
+	shortestLength := len(rawInput)
+	alpha := "abcdefghijklmnopqrstuvwxyz"
+	for i := 0; i < len(alpha); i++ {
+		polymer = rawInput // reset polymer to default state
+		polymer = strings.Replace(polymer, string(alpha[i]), "", -1)
+		polymer = strings.Replace(polymer, string(unicode.ToUpper(rune(alpha[i]))), "", -1)
+
+		polymer = processPolymer(polymer)
+
+		if len(polymer) < shortestLength {
+			shortestLength = len(polymer)
 		}
 	}
 
-	fmt.Printf("Polymer length: %d\n", len(polymer))
+	fmt.Printf("Part two: polymer length: %d\n", shortestLength)
 }
 
 // Reads a string from the specified input file path.
@@ -41,10 +53,24 @@ func loadInputFromFile(filepath string) (string, error) {
 	return text, scanner.Err()
 }
 
+// Process all reactions until polymer is stable.
+// Return resulting polymer.
+func processPolymer(polymer string) string {
+	var reacted bool
+	for {
+		reacted, polymer = processPolymerReaction(polymer)
+		if !reacted {
+			break
+		}
+	}
+
+	return polymer
+}
+
 // Remove the first reacting runes from the polymer string.
 // If runes were removed, returns true; otherwise false.
 // The string return value is the resulting polymer.
-func processPolymer(polymer string) (bool, string) {
+func processPolymerReaction(polymer string) (bool, string) {
 	var r, neighbor rune
 	for i := 1; i < len(polymer); i++ {
 		r = rune(polymer[i])
