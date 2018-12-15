@@ -20,12 +20,12 @@ type cell struct {
 
 func main() {
 	testPoints := loadTestCaseData()
-	maxArea := calculateLargestArea(testPoints)
-	fmt.Printf("TC01: largest area = %d\n", maxArea)
+	fmt.Printf("TC01: largest area = %d\n", calculateLargestArea(testPoints))
+	fmt.Printf("TC02: region size: %d\n", calculateRegionSize(testPoints, 32))
 
 	points, _ := loadInputFromFile("input.txt")
-	maxArea = calculateLargestArea(points)
-	fmt.Printf("Largest non-infinite area: %d\n", maxArea)
+	fmt.Printf("Largest non-infinite area: %d\n", calculateLargestArea(points))
+	fmt.Printf("Region size: %d\n", calculateRegionSize(points, 10000))
 }
 
 func loadInputFromFile(filepath string) ([]point, error) {
@@ -94,6 +94,28 @@ func calculateLargestArea(points []point) int {
 	return maxArea
 }
 
+func calculateRegionSize(points []point, threshold int) int {
+	maxX, maxY := calculateMaximumDimensions(points)
+	regionSize := 0
+
+	for i := 0; i <= maxX; i++ {
+		for j := 0; j <= maxY; j++ {
+			size := 0
+
+			for _, p := range points {
+				size += calculateDistanceBetweenPoints(point{i, j}, p)
+			}
+
+			if size < threshold {
+				regionSize++
+			}
+		}
+	}
+
+	return regionSize
+}
+
+// Determine if a point is "infinite".
 func isInfinitePoint(p point, index int, grid [][]cell, minX int, minY int, maxX int, maxY int) bool {
 	// if point is on the edge of point coordinates, it's infinite
 	if p.X == maxX || p.Y == maxY || p.X == minX || p.Y == minY {
