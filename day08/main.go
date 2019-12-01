@@ -23,6 +23,7 @@ func main() {
 	root := loadTreeFromFile("input.txt")
 	fmt.Printf("tree loaded: %s\n", strconv.QuoteRune(root.label))
 	fmt.Printf("global metadata sum = %d\n", metadataSum)
+	fmt.Printf("node value = %d\n", getNodeValue(root))
 
 	fmt.Println()
 }
@@ -63,4 +64,22 @@ func parseNode(label rune, inputList []string, index *int) *node {
 	}
 
 	return currNode
+}
+
+func getNodeValue(currNode *node) int {
+	val := 0
+
+	if currNode.childCount == 0 {
+		for i := 0; i < currNode.metadataCount; i++ {
+			val += currNode.metadata[i]
+		}
+	} else {
+		for i := 0; i < currNode.metadataCount; i++ {
+			if currNode.metadata[i] <= currNode.childCount {
+				val += getNodeValue(currNode.children[currNode.metadata[i]-1])
+			}
+		}
+	}
+
+	return val
 }
